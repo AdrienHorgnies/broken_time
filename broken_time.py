@@ -80,9 +80,11 @@ class BrokenTime():
 
     ## ARITHMETICS OPERATORS
 
-    @decorators.cast_args
     def __add__(self, other):
-        return self.add(seconds=other._seconds)
+        return self.add(other)
+
+    def __sub__(self, other):
+        return self.sub(other)
 
     ## ITERATION PROTOCOL
 
@@ -111,8 +113,13 @@ class BrokenTime():
 
     ## METHODS
 
-    def add(self, hours=0, minutes=0, seconds=0):
-        return BrokenTime(hours, minutes, self._seconds + seconds)
+    @decorators.cast_args
+    def add(self, other):
+        return BrokenTime(seconds=self._seconds + other._seconds)
+
+    @decorators.cast_args
+    def sub(self, other):
+        return BrokenTime(seconds=self._seconds - other._seconds)
 
     @staticmethod
     def from_str(time_str):
