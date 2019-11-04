@@ -8,7 +8,7 @@ Very limited features as I had very limited needs (that were'nt met by standard 
 ## Features
 
 - Comparisons : <, <=, >, >=, ==, !=)
-- Arithmetics : +
+- Arithmetics : +, -
 - Conversion : BrokenTime.from_string('08:00:00') == '08:00:00', @BrokenTime.decorators.cast_args(function)
 - Iterations : BrokenTime.since('08:00:00').to('12:00:00').by('0:30:00') == BrokenTime.range('08:00:00', '12:00:00', '00:30:00')
 - OverFlow : BrokenTime(23) + '2:00:00' == '25:00:00'
