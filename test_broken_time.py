@@ -76,3 +76,7 @@ def test_cast_args_raises_value_error():
 
     with pytest.raises(ValueError):
         decorated(1)
+
+
+def test_cast_args_add():
+    assert bt(1, 1, 1) + '00:00:01' == bt(1, 1, 2)

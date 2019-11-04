@@ -26,6 +26,7 @@ class BrokenTime:
         return f'{display_sign}{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
 
     class Decorators:
+        @staticmethod
         def cast_args(function=None, after=-1):
             """cast arguments of decorated function to BrokenTime
             :param function: decorated function 
@@ -33,7 +34,7 @@ class BrokenTime:
             :type after: int
             """
 
-            def wrapper(function):
+            def wrapper(wrapped_function):
                 def fresh_function(*args, **kwargs):
                     recycled_args = args[:after + 1]
 
@@ -42,7 +43,7 @@ class BrokenTime:
 
                     args = recycled_args + fresh_args
 
-                    return function(*args, **kwargs)
+                    return wrapped_function(*args, **kwargs)
 
                 return fresh_function
 
