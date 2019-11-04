@@ -2,11 +2,10 @@
 that hours can overflow (25 hours and more is legit)"""
 import re
 
+TIME_PATTERN = re.compile(r'(?P<hours>\d+):(?P<minutes>\d\d):(?P<seconds>\d\d)')
 
-TIME_PATTERN = re.compile('(?P<hours>\d+):(?P<minutes>\d\d):(?P<seconds>\d\d)')
 
-
-class BrokenTime():
+class BrokenTime:
     def __init__(self, hours=0, minutes=0, seconds=0):
         self._seconds = hours * 3600 + minutes * 60 + seconds
 
@@ -26,16 +25,17 @@ class BrokenTime():
         display_sign = "-" if self._seconds < 0 else ""
         return f'{display_sign}{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
 
-    class decorators:
+    class Decorators:
         def cast_args(function=None, after=-1):
             """cast arguments of decorated function to BrokenTime
             :param function: decorated function 
             :param after: index after which arguments must be casted (after is excluded)
             :type after: int
             """
+
             def wrapper(function):
                 def fresh_function(*args, **kwargs):
-                    recycled_args = args[:after+1]
+                    recycled_args = args[:after + 1]
 
                     t = BrokenTime._ensure_object
                     fresh_args = tuple(t(arg) for arg in args[after + 1:])
@@ -51,34 +51,33 @@ class BrokenTime():
 
             return wrapper
 
+    # ## COMPARISON OPERATORS
 
-    ## COMPARISON OPERATORS
-
-    @decorators.cast_args
+    @Decorators.cast_args
     def __eq__(self, other):
         return self._seconds == other._seconds
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def __ne__(self, other):
         return self._seconds != other._seconds
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def __gt__(self, other):
         return self._seconds > other._seconds
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def __ge__(self, other):
         return self._seconds >= other._seconds
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def __lt__(self, other):
         return self._seconds < other._seconds
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def __le__(self, other):
         return self._seconds <= other._seconds
 
-    ## ARITHMETICS OPERATORS
+    # ## ARITHMETICS OPERATORS
 
     def __add__(self, other):
         return self.add(other)
@@ -86,13 +85,13 @@ class BrokenTime():
     def __sub__(self, other):
         return self.sub(other)
 
-    ## ITERATION PROTOCOL
+    # ## ITERATION PROTOCOL
 
     def __iter__(self):
         return iter(BrokenTimeIterable(self))
 
     @staticmethod
-    @decorators.cast_args
+    @Decorators.cast_args
     def range(*args):
         if len(args) == 1:
             return BrokenTimeIterable(start=BrokenTime(), end=args[0])
@@ -103,21 +102,21 @@ class BrokenTime():
         else:
             raise ValueError('Expects 1 to 3 arguments')
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def since(self):
         return BrokenTimeIterable(self)
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def to(self, end):
         return BrokenTimeIterable(self, end)
 
-    ## METHODS
+    # ## METHODS
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def add(self, other):
         return BrokenTime(seconds=self._seconds + other._seconds)
 
-    @decorators.cast_args
+    @Decorators.cast_args
     def sub(self, other):
         return BrokenTime(seconds=self._seconds - other._seconds)
 
@@ -154,15 +153,16 @@ class BrokenTimeIterable():
     def __iter__(self):
         return BrokenTimeIterator(self)
 
-    @BrokenTime.decorators.cast_args(after=0)
+    @BrokenTime.Decorators.cast_args(after=0)
     def to(self, end):
         return BrokenTimeIterable(self.start, end, self.step)
 
-    @BrokenTime.decorators.cast_args(after=0)
+    @BrokenTime.Decorators.cast_args(after=0)
     def by(self, step):
         return BrokenTimeIterable(self.start, self.end, step)
 
-class BrokenTimeIterator():
+
+class BrokenTimeIterator:
     def __init__(self, iterable):
         self.iterable = iterable
         self.current = iterable.start
@@ -177,4 +177,3 @@ class BrokenTimeIterator():
         current = self.current
         self.current += self.iterable.step
         return current
-
