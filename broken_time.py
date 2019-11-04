@@ -12,18 +12,19 @@ class BrokenTime():
 
     @property
     def hours(self):
-        return self._seconds // 3600
+        return abs(self._seconds) // 3600
 
     @property
     def minutes(self):
-        return self._seconds // 60 % 60
+        return abs(self._seconds) // 60 % 60
 
     @property
     def seconds(self):
-        return self._seconds % 60
+        return abs(self._seconds) % 60
 
     def __repr__(self):
-        return f'{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
+        display_sign = "-" if self._seconds < 0 else ""
+        return f'{display_sign}{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
 
     class decorators:
         def cast_args(function=None, after=-1):
