@@ -110,10 +110,10 @@ class BrokenTime:
         return self.truediv(right_operand)
 
     def __floordiv__(self, right_operand):
-        self.floordiv(right_operand)
+        return self.floordiv(right_operand)
 
     def __mod__(self, other):
-        self.mod(other)
+        return self.mod(other)
 
     # ## UNARY
 
