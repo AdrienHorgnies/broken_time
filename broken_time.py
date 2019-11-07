@@ -1,8 +1,28 @@
 """Representation of time supporting math operations with the particularity 
 that hours can overflow (25 hours and more is legit)"""
 import re
+import functools
 
 TIME_PATTERN = re.compile(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d+)')
+
+
+def str_to_bt(decorated):
+    """
+    Decoration for functions which want to accept str representation of BrokenTime in place of BrokenTime
+
+    :param decorated: function to wrap
+    :type decorated: function
+    :return: function with same logic and which accepts str arguments in place of BrokenTime
+    :rtype: function
+    """
+    @functools.wraps(decorated)
+    def fresh_function(*args, **kwargs):
+        t = BrokenTime.from_str
+        fresh_args = tuple(t(arg) if type(arg) == str else arg for arg in args)
+
+        return decorated(*fresh_args, **kwargs)
+
+    return fresh_function
 
 
 class BrokenTime:
@@ -25,20 +45,9 @@ class BrokenTime:
         display_sign = "-" if self._seconds < 0 else ""
         return f'{display_sign}{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
 
-    class Decorators:
-        @staticmethod
-        def cast_str_to_bt(decorated):
-            def fresh_function(*args, **kwargs):
-                t = BrokenTime.from_str
-                fresh_args = tuple(t(arg) if type(arg) == str else arg for arg in args)
-
-                return decorated(*fresh_args, **kwargs)
-
-            return fresh_function
-
     # ## COMPARISON OPERATORS
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __eq__(self, other):
         """
         :param other: the right operand of the comparison
@@ -46,7 +55,7 @@ class BrokenTime:
         """
         return self._seconds == other._seconds
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __ne__(self, other):
         """
         :param other: the right operand of the comparison
@@ -54,7 +63,7 @@ class BrokenTime:
         """
         return self._seconds != other._seconds
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __gt__(self, other):
         """
         :param other: the right operand of the comparison
@@ -62,7 +71,7 @@ class BrokenTime:
         """
         return self._seconds > other._seconds
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __ge__(self, other):
         """
         :param other: the right operand of the comparison
@@ -70,7 +79,7 @@ class BrokenTime:
         """
         return self._seconds >= other._seconds
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __lt__(self, other):
         """
         :param other: the right operand of the comparison
@@ -78,7 +87,7 @@ class BrokenTime:
         """
         return self._seconds < other._seconds
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def __le__(self, other):
         """
         :param other: the right operand of the comparison
@@ -109,7 +118,7 @@ class BrokenTime:
         return iter(BrokenTimeIterable(self))
 
     @staticmethod
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def range(*args):
         if len(args) == 1:
             return BrokenTimeIterable(start=BrokenTime(), end=args[0])
@@ -120,17 +129,17 @@ class BrokenTime:
         else:
             raise ValueError('Expects 1 to 3 arguments')
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def since(self):
         return BrokenTimeIterable(self)
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def to(self, end):
         return BrokenTimeIterable(self, end)
 
     # ## METHODS
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def add(self, other):
         """
         :param other: the right operand of the addition
@@ -138,7 +147,7 @@ class BrokenTime:
         """
         return BrokenTime(seconds=self._seconds + other._seconds)
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def sub(self, other):
         """
         :param other: the right operand of the subtraction
@@ -155,7 +164,7 @@ class BrokenTime:
         """
         return BrokenTime(seconds=round(self._seconds * coefficient))
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def truediv(self, right_operand):
         """
         :param right_operand: right operand of the division
@@ -169,7 +178,7 @@ class BrokenTime:
             return self._seconds / right_operand._seconds
         return BrokenTime(seconds=round(self._seconds / right_operand))
 
-    @Decorators.cast_str_to_bt
+    @str_to_bt
     def floordiv(self, right_operand):
         """
         :param right_operand: right operand of the division
@@ -208,11 +217,11 @@ class BrokenTimeIterable:
     def __iter__(self):
         return BrokenTimeIterator(self)
 
-    @BrokenTime.Decorators.cast_str_to_bt
+    @str_to_bt
     def to(self, end):
         return BrokenTimeIterable(self.start, end, self.step)
 
-    @BrokenTime.Decorators.cast_str_to_bt
+    @str_to_bt
     def by(self, step):
         return BrokenTimeIterable(self.start, self.end, step)
 

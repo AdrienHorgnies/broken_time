@@ -45,7 +45,7 @@ def test_str_three():
 
 def test_cast_str_to_bt_convert_str():
     decorated = mock.MagicMock()
-    wrapped = bt.Decorators.cast_str_to_bt(decorated)
+    wrapped = broken_time.str_to_bt(decorated)
 
     wrapped('01:01:01')
     decorated.assert_called_with(bt(1, 1, 1))
@@ -53,7 +53,7 @@ def test_cast_str_to_bt_convert_str():
 
 def test_cast_str_to_bt_skips_bt():
     decorated = mock.MagicMock()
-    wrapped = bt.Decorators.cast_str_to_bt(decorated)
+    wrapped = broken_time.str_to_bt(decorated)
 
     t = bt(1, 1, 1)
     wrapped(t)
@@ -63,7 +63,7 @@ def test_cast_str_to_bt_skips_bt():
 
 def test_cast_str_to_bt_skips_not_str():
     decorated = mock.MagicMock()
-    wrapped = bt.Decorators.cast_str_to_bt(decorated)
+    wrapped = broken_time.str_to_bt(decorated)
 
     wrapped(1, '01:01:01', None)
 
@@ -72,7 +72,7 @@ def test_cast_str_to_bt_skips_not_str():
 
 def test_cast_str_to_bt_raises_value_error():
     decorated = mock.MagicMock()
-    wrapped = bt.Decorators.cast_str_to_bt(decorated)
+    wrapped = broken_time.str_to_bt(decorated)
 
     with pytest.raises(ValueError):
         wrapped('definitely-not-a-time-str')
