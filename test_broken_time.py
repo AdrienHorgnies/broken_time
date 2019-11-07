@@ -113,3 +113,19 @@ def test_sub_negative():
     assert bt(1, 1, 1) - bt(-1, -1, -1) == bt(2, 2, 2)
     assert bt(-1, -1, -1) - bt(-1, -1, -1) == bt(0, 0, 0)
 
+
+def test_mul_negative():
+    assert bt(1, 1, 1).mul(-1) == bt(-1, -1, -1)
+
+
+def test_mul_neutral():
+    assert bt(1, 1, 1).mul(1) == bt(1, 1, 1)
+
+
+def test_mul_positive():
+    assert bt(1, 1, 1).mul(2) == bt(2, 2, 2)
+
+
+def test_mul_float():
+    assert bt(1, 1, 1).mul(1.5) == bt(1, 31, 32)
+

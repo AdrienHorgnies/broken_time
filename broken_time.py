@@ -121,6 +121,9 @@ class BrokenTime:
     def sub(self, other):
         return BrokenTime(seconds=self._seconds - other._seconds)
 
+    def mul(self, coefficient):
+        return BrokenTime(seconds=round(self._seconds * coefficient))
+
     @staticmethod
     def from_str(time_str):
         try:
