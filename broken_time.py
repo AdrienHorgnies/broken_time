@@ -2,7 +2,7 @@
 that hours can overflow (25 hours and more is legit)"""
 import re
 
-TIME_PATTERN = re.compile(r'(?P<hours>\d+):(?P<minutes>\d\d):(?P<seconds>\d\d)')
+TIME_PATTERN = re.compile(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d+)')
 
 
 class BrokenTime:
@@ -27,34 +27,18 @@ class BrokenTime:
 
     class Decorators:
         @staticmethod
-        def cast_args(function=None, after=-1):
-            """cast arguments of decorated function to BrokenTime
-            :param function: decorated function 
-            :param after: index after which arguments must be casted (after is excluded)
-            :type after: int
-            """
+        def cast_str_to_bt(decorated):
+            def fresh_function(*args, **kwargs):
+                t = BrokenTime.from_str
+                fresh_args = tuple(t(arg) if type(arg) == str else arg for arg in args)
 
-            def wrapper(wrapped_function):
-                def fresh_function(*args, **kwargs):
-                    recycled_args = args[:after + 1]
+                return decorated(*fresh_args, **kwargs)
 
-                    t = BrokenTime._ensure_object
-                    fresh_args = tuple(t(arg) for arg in args[after + 1:])
-
-                    args = recycled_args + fresh_args
-
-                    return wrapped_function(*args, **kwargs)
-
-                return fresh_function
-
-            if function is not None:
-                return wrapper(function)
-
-            return wrapper
+            return fresh_function
 
     # ## COMPARISON OPERATORS
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __eq__(self, other):
         """
         :param other: the right operand of the comparison
@@ -62,7 +46,7 @@ class BrokenTime:
         """
         return self._seconds == other._seconds
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __ne__(self, other):
         """
         :param other: the right operand of the comparison
@@ -70,7 +54,7 @@ class BrokenTime:
         """
         return self._seconds != other._seconds
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __gt__(self, other):
         """
         :param other: the right operand of the comparison
@@ -78,7 +62,7 @@ class BrokenTime:
         """
         return self._seconds > other._seconds
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __ge__(self, other):
         """
         :param other: the right operand of the comparison
@@ -86,7 +70,7 @@ class BrokenTime:
         """
         return self._seconds >= other._seconds
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __lt__(self, other):
         """
         :param other: the right operand of the comparison
@@ -94,7 +78,7 @@ class BrokenTime:
         """
         return self._seconds < other._seconds
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def __le__(self, other):
         """
         :param other: the right operand of the comparison
@@ -113,13 +97,16 @@ class BrokenTime:
     def __mul__(self, coefficient):
         return self.mul(coefficient)
 
+    def __truediv__(self, right_operand):
+        return self.truediv(right_operand)
+
     # ## ITERATION PROTOCOL
 
     def __iter__(self):
         return iter(BrokenTimeIterable(self))
 
     @staticmethod
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def range(*args):
         if len(args) == 1:
             return BrokenTimeIterable(start=BrokenTime(), end=args[0])
@@ -130,17 +117,17 @@ class BrokenTime:
         else:
             raise ValueError('Expects 1 to 3 arguments')
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def since(self):
         return BrokenTimeIterable(self)
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def to(self, end):
         return BrokenTimeIterable(self, end)
 
     # ## METHODS
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def add(self, other):
         """
         :param other: the right operand of the addition
@@ -148,7 +135,7 @@ class BrokenTime:
         """
         return BrokenTime(seconds=self._seconds + other._seconds)
 
-    @Decorators.cast_args
+    @Decorators.cast_str_to_bt
     def sub(self, other):
         """
         :param other: the right operand of the subtraction
@@ -159,31 +146,37 @@ class BrokenTime:
     def mul(self, coefficient):
         """
         :param coefficient: the right operand of the multiplication
-        :type coefficient: int
+        :type coefficient: float
         :rtype: BrokenTime
-        :returns: result of the multiplication, with seconds rounded to closest integer
+        :return: result of the multiplication, with seconds rounded to closest integer
         """
         return BrokenTime(seconds=round(self._seconds * coefficient))
 
+    @Decorators.cast_str_to_bt
+    def truediv(self, right_operand):
+        """
+        :param right_operand: right operand of the division
+        :type right_operand: BrokenTime | number
+        :rtype: number | BrokenTime
+        :return: if right_operand is a BrokenTime, the number of times self contains it
+        :return: if right_operand is a number, the BrokenTime that self contains right_operand times, seconds rounded to
+        closest integer
+        """
+        if type(right_operand) == BrokenTime:
+            return self._seconds / right_operand._seconds
+        return BrokenTime(seconds=round(self._seconds / right_operand))
+
     @staticmethod
     def from_str(time_str):
-        try:
-            matches = TIME_PATTERN.match(time_str).groupdict()
-        except AttributeError:
-            raise ValueError('string do not match time pattern')
+        tentative_match = TIME_PATTERN.match(time_str)
+        if hasattr(tentative_match, 'groupdict'):
+            match = tentative_match.groupdict()
+        else:
+            raise ValueError(f'string do not match time pattern "{TIME_PATTERN.pattern}"')
 
-        casted_matches = {key: int(value) for key, value in matches.items()}
+        time_values = {key: int(value) for key, value in match.items()}
 
-        return BrokenTime(**casted_matches)
-
-    @staticmethod
-    def _ensure_object(thing):
-        if type(thing) == BrokenTime:
-            return thing
-        elif type(thing) == str:
-            return BrokenTime.from_str(thing)
-
-        raise ValueError(f'{thing} cannot be converted to BrokenTime')
+        return BrokenTime(**time_values)
 
 
 class BrokenTimeIterable:
@@ -198,11 +191,11 @@ class BrokenTimeIterable:
     def __iter__(self):
         return BrokenTimeIterator(self)
 
-    @BrokenTime.Decorators.cast_args(after=0)
+    @BrokenTime.Decorators.cast_str_to_bt
     def to(self, end):
         return BrokenTimeIterable(self.start, end, self.step)
 
-    @BrokenTime.Decorators.cast_args(after=0)
+    @BrokenTime.Decorators.cast_str_to_bt
     def by(self, step):
         return BrokenTimeIterable(self.start, self.end, step)
 

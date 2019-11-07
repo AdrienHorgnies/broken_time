@@ -43,42 +43,42 @@ def test_str_three():
     assert str(t) == '100:01:01'
 
 
-def test_cast_args_convert_str():
-    mock_function = mock.MagicMock()
-    decorated = bt.Decorators.cast_args(mock_function)
+def test_cast_str_to_bt_convert_str():
+    decorated = mock.MagicMock()
+    wrapped = bt.Decorators.cast_str_to_bt(decorated)
 
-    decorated('01:01:01')
-    mock_function.assert_called_with(bt(1, 1, 1))
+    wrapped('01:01:01')
+    decorated.assert_called_with(bt(1, 1, 1))
 
 
-def test_cast_args_skips_bt():
-    mock_function = mock.MagicMock()
-    decorated = bt.Decorators.cast_args(mock_function)
+def test_cast_str_to_bt_skips_bt():
+    decorated = mock.MagicMock()
+    wrapped = bt.Decorators.cast_str_to_bt(decorated)
 
     t = bt(1, 1, 1)
-    decorated(t)
+    wrapped(t)
 
-    mock_function.assert_called_with(t)
-
-
-def test_cast_args_skips_after():
-    mock_function = mock.MagicMock()
-    decorated = bt.Decorators.cast_args(after=0)(mock_function)
-
-    decorated(1, '01:01:01')
-
-    mock_function.assert_called_with(1, bt(1, 1, 1))
+    decorated.assert_called_with(t)
 
 
-def test_cast_args_raises_value_error():
-    mock_function = mock.MagicMock()
-    decorated = bt.Decorators.cast_args(mock_function)
+def test_cast_str_to_bt_skips_not_str():
+    decorated = mock.MagicMock()
+    wrapped = bt.Decorators.cast_str_to_bt(decorated)
+
+    wrapped(1, '01:01:01', None)
+
+    decorated.assert_called_with(1, bt(1, 1, 1), None)
+
+
+def test_cast_str_to_bt_raises_value_error():
+    decorated = mock.MagicMock()
+    wrapped = bt.Decorators.cast_str_to_bt(decorated)
 
     with pytest.raises(ValueError):
-        decorated(1)
+        wrapped('definitely-not-a-time-str')
 
 
-def test_cast_args_add():
+def test_cast_str_to_bt_add():
     assert bt(1, 1, 1) + '00:00:01' == bt(1, 1, 2)
 
 
@@ -129,3 +129,22 @@ def test_mul_positive():
 def test_mul_float():
     assert bt(1, 1, 1).mul(1.5) == bt(1, 31, 32)
 
+
+def test_truediv_neutral():
+    assert bt(1, 1, 1).truediv(1) == bt(1, 1, 1)
+
+
+def test_truediv_equal():
+    assert bt(1, 1, 1).truediv(bt(1, 1, 1)) == 1
+
+
+def test_truediv_bt():
+    assert bt(0, 45, 0).truediv(bt(0, 15, 0)) == 3
+    assert bt(0, 45, 0).truediv(bt(0, 5, 0)) == 9
+    assert bt(0, 45, 0).truediv(bt(0, 90, 0)) == 0.5
+
+
+def test_truediv_float():
+    assert bt(0, 45, 0).truediv(3) == bt(0, 15, 0)
+    assert bt(0, 45, 0).truediv(9) == bt(0, 5, 0)
+    assert bt(0, 45, 0).truediv(0.5) == bt(0, 90, 0)
