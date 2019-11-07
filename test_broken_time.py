@@ -148,3 +148,24 @@ def test_truediv_float():
     assert bt(0, 45, 0).truediv(3) == bt(0, 15, 0)
     assert bt(0, 45, 0).truediv(9) == bt(0, 5, 0)
     assert bt(0, 45, 0).truediv(0.5) == bt(0, 90, 0)
+
+
+def test_floordiv_neutral():
+    assert bt(1, 1, 1).floordiv(1) == bt(1, 1, 1)
+
+
+def test_floordiv_equal():
+    assert bt(1, 1, 1).floordiv(bt(1, 1, 1)) == 1
+
+
+def test_floordiv_bt():
+    assert bt(0, 45, 0).floordiv(bt(0, 15, 0)) == 3
+    assert bt(0, 45, 0).floordiv(bt(0, 5, 0)) == 9
+    assert bt(0, 45, 0).floordiv(bt(0, 90, 0)) == 0
+
+
+def test_floordiv_float():
+    assert bt(0, 45, 0).floordiv(3) == bt(0, 15, 0)
+    assert bt(0, 45, 0).floordiv(9) == bt(0, 5, 0)
+    assert bt(0, 45, 0).floordiv(0.5) == bt(0, 90, 0)
+    assert bt(0, 3, 0).floordiv(7) == bt(0, 0, 25)

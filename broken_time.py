@@ -100,6 +100,9 @@ class BrokenTime:
     def __truediv__(self, right_operand):
         return self.truediv(right_operand)
 
+    def __floordiv__(self, right_operand):
+        self.floordiv(right_operand)
+
     # ## ITERATION PROTOCOL
 
     def __iter__(self):
@@ -146,7 +149,7 @@ class BrokenTime:
     def mul(self, coefficient):
         """
         :param coefficient: the right operand of the multiplication
-        :type coefficient: float
+        :type coefficient: int | float
         :rtype: BrokenTime
         :return: result of the multiplication, with seconds rounded to closest integer
         """
@@ -156,8 +159,8 @@ class BrokenTime:
     def truediv(self, right_operand):
         """
         :param right_operand: right operand of the division
-        :type right_operand: BrokenTime | number
-        :rtype: number | BrokenTime
+        :type right_operand: BrokenTime | int | float
+        :rtype: int | float | BrokenTime
         :return: if right_operand is a BrokenTime, the number of times self contains it
         :return: if right_operand is a number, the BrokenTime that self contains right_operand times, seconds rounded to
         closest integer
@@ -165,6 +168,19 @@ class BrokenTime:
         if type(right_operand) == BrokenTime:
             return self._seconds / right_operand._seconds
         return BrokenTime(seconds=round(self._seconds / right_operand))
+
+    @Decorators.cast_str_to_bt
+    def floordiv(self, right_operand):
+        """
+        :param right_operand: right operand of the division
+        :type right_operand: BrokenTime | int | float
+        :rtype:  int | float | BrokenTime
+        :return: if right_operand is a BrokenTime, the number of times self fully contains it
+        :return: if right_operand is a number, the biggest BrokenTime that self contains fully right_operand times
+        """
+        if type(right_operand) == BrokenTime:
+            return self._seconds // right_operand._seconds
+        return BrokenTime(seconds=self._seconds // right_operand)
 
     @staticmethod
     def from_str(time_str):
@@ -182,6 +198,7 @@ class BrokenTime:
 class BrokenTimeIterable:
     def __init__(self, start, end=None, step=BrokenTime(1, 0, 0)):
         self.start = start
+        # todo if step is a number, understands it is the number of wanted steps (step = (end-start)/step)
         self.step = step
         self.end = end
 
