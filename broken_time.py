@@ -110,6 +110,9 @@ class BrokenTime:
     def __sub__(self, other):
         return self.sub(other)
 
+    def __mul__(self, coefficient):
+        return self.mul(coefficient)
+
     # ## ITERATION PROTOCOL
 
     def __iter__(self):
