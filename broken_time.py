@@ -112,6 +112,9 @@ class BrokenTime:
     def __floordiv__(self, right_operand):
         self.floordiv(right_operand)
 
+    def __mod__(self, other):
+        self.mod(other)
+
     # ## ITERATION PROTOCOL
 
     def __iter__(self):
@@ -190,6 +193,16 @@ class BrokenTime:
         if type(right_operand) == BrokenTime:
             return self._seconds // right_operand._seconds
         return BrokenTime(seconds=self._seconds // right_operand)
+
+    @str_to_bt
+    def mod(self, other):
+        """
+        :param other: the base of the modulo
+        :type other: BrokenTime
+        :return: The rest of the division of self by other
+        :rtype: BrokenTime
+        """
+        return BrokenTime(seconds=self._seconds % other._seconds)
 
     @staticmethod
     def from_str(time_str):

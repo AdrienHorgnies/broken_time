@@ -169,3 +169,15 @@ def test_floordiv_float():
     assert bt(0, 45, 0).floordiv(9) == bt(0, 5, 0)
     assert bt(0, 45, 0).floordiv(0.5) == bt(0, 90, 0)
     assert bt(0, 3, 0).floordiv(7) == bt(0, 0, 25)
+
+
+def test_mod_bigger():
+    assert bt(1, 1, 1).mod(bt(1, 1, 2)) == bt(1, 1, 1)
+
+
+def test_mod_smaller():
+    assert bt(1, 1, 1).mod(bt(1, 0, 0)) == bt(0, 1, 1)
+
+
+def test_mod_equal():
+    assert bt(1, 1, 1).mod(bt(1, 1, 1)) == bt(0, 0, 0)
