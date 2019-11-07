@@ -56,29 +56,53 @@ class BrokenTime:
 
     @Decorators.cast_args
     def __eq__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds == other._seconds
 
     @Decorators.cast_args
     def __ne__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds != other._seconds
 
     @Decorators.cast_args
     def __gt__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds > other._seconds
 
     @Decorators.cast_args
     def __ge__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds >= other._seconds
 
     @Decorators.cast_args
     def __lt__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds < other._seconds
 
     @Decorators.cast_args
     def __le__(self, other):
+        """
+        :param other: the right operand of the comparison
+        :type other: BrokenTime
+        """
         return self._seconds <= other._seconds
 
-    # ## ARITHMETICS OPERATORS
+    # ## ARITHMETIC'S OPERATORS
 
     def __add__(self, other):
         return self.add(other)
@@ -115,13 +139,27 @@ class BrokenTime:
 
     @Decorators.cast_args
     def add(self, other):
+        """
+        :param other: the right operand of the addition
+        :type other: BrokenTime
+        """
         return BrokenTime(seconds=self._seconds + other._seconds)
 
     @Decorators.cast_args
     def sub(self, other):
+        """
+        :param other: the right operand of the subtraction
+        :type other: BrokenTime
+        """
         return BrokenTime(seconds=self._seconds - other._seconds)
 
     def mul(self, coefficient):
+        """
+        :param coefficient: the right operand of the multiplication
+        :type coefficient: int
+        :rtype: BrokenTime
+        :returns: result of the multiplication, with seconds rounded to closest integer
+        """
         return BrokenTime(seconds=round(self._seconds * coefficient))
 
     @staticmethod
