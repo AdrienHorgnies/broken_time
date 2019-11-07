@@ -181,3 +181,10 @@ def test_mod_smaller():
 
 def test_mod_equal():
     assert bt(1, 1, 1).mod(bt(1, 1, 1)) == bt(0, 0, 0)
+
+
+def test_neg():
+    assert bt(1, 1, 1).neg() == bt(-1, -1, -1)
+    assert bt(0, 0, 0).neg() == bt(0, 0, 0)
+    assert bt(-1, -1, -1).neg() == bt(1, 1, 1) 
+    assert bt(-1, 1, -1).neg() == bt(1, -1, 1)

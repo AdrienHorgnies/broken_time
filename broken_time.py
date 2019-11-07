@@ -115,6 +115,11 @@ class BrokenTime:
     def __mod__(self, other):
         self.mod(other)
 
+    # ## UNARY
+
+    def __neg__(self):
+        self.neg()
+
     # ## ITERATION PROTOCOL
 
     def __iter__(self):
@@ -203,6 +208,13 @@ class BrokenTime:
         :rtype: BrokenTime
         """
         return BrokenTime(seconds=self._seconds % other._seconds)
+
+    def neg(self):
+        """
+        :return: the opposite of self, relative to zero
+        :rtype: BrokenTime
+        """
+        return BrokenTime(seconds=-self._seconds)
 
     @staticmethod
     def from_str(time_str):

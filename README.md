@@ -9,6 +9,7 @@ Very limited features as I had very limited needs (that were'nt met by standard 
 
 - Comparisons : <, <=, >, >=, ==, !=
 - Arithmetic : +, -, *, /, //, %
+- Unary: -
 - Parsing : BrokenTime.from_string('08:00:00') == '08:00:00'
 - Iterable : BrokenTime.since('08:00:00').to('12:00:00').by('0:30:00')
 - OverFlow : BrokenTime(23, 58, 59) + '1:00:61' == '25:00:00'
