@@ -80,3 +80,36 @@ def test_cast_args_raises_value_error():
 
 def test_cast_args_add():
     assert bt(1, 1, 1) + '00:00:01' == bt(1, 1, 2)
+
+
+def test_add_positive():
+    assert bt(1, 1, 1) + bt(0, 1, 1) == bt(1, 2, 2)
+    assert bt(1, 1, 1) + bt(1, 0, 0) == bt(2, 1, 1)
+    assert bt(1, 59, 59) + bt(0, 0, 1) == bt(2, 0, 0)
+
+
+def test_add_neutral():
+    assert bt(1, 1, 1) + bt(0, 0, 0) == bt(1, 1, 1)
+
+
+def test_add_negative():
+    assert bt(1, 1, 1) + bt(0, -1, -1) == bt(1, 0, 0)
+    assert bt(1, 1, 1) + bt(-1, -1, -1) == bt(0, 0, 0)
+    assert bt(1, 1, 1) + bt(-2, -2, -2) == bt(-1, -1, -1)
+
+
+def test_sub_positive():
+    assert bt(1, 1, 1) - bt(0, 1, 1) == bt(1, 0, 0)
+    assert bt(1, 1, 1) - bt(1, 1, 1) == bt(0, 0, 0)
+    assert bt(1, 1, 1) - bt(2, 2, 2) == bt(-1, -1, -1)
+
+
+def test_sub_neutral():
+    assert bt(1, 1, 1) - bt(0, 0, 0) == bt(1, 1, 1)
+
+
+def test_sub_negative():
+    assert bt(1, 1, 1) - bt(0, -1, -1) == bt(1, 2, 2)
+    assert bt(1, 1, 1) - bt(-1, -1, -1) == bt(2, 2, 2)
+    assert bt(-1, -1, -1) - bt(-1, -1, -1) == bt(0, 0, 0)
+

@@ -142,7 +142,7 @@ class BrokenTime:
         raise ValueError(f'{thing} cannot be converted to BrokenTime')
 
 
-class BrokenTimeIterable():
+class BrokenTimeIterable:
     def __init__(self, start, end=None, step=BrokenTime(1, 0, 0)):
         self.start = start
         self.step = step
