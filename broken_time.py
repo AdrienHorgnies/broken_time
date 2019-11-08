@@ -3,7 +3,7 @@ that hours can overflow (25 hours and more is legit)"""
 import re
 import functools
 
-TIME_PATTERN = re.compile(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d+)')
+TIME_PATTERN = re.compile(r'^(?P<hours>\d+):(?P<minutes>\d+)(:?:(?P<seconds>\d+))?$')
 
 
 def str_to_bt(decorated):
@@ -224,7 +224,7 @@ class BrokenTime:
         else:
             raise ValueError(f'string do not match time pattern "{TIME_PATTERN.pattern}"')
 
-        time_values = {key: int(value) for key, value in match.items()}
+        time_values = {key: int(value) for key, value in match.items() if value is not None}
 
         return BrokenTime(**time_values)
 
