@@ -27,7 +27,7 @@ def str_to_bt(decorated):
 
 class BrokenTime:
     def __init__(self, hours=0, minutes=0, seconds=0):
-        self._seconds = hours * 3600 + minutes * 60 + seconds
+        self._seconds = round(hours * 3600 + minutes * 60 + seconds)
 
     @property
     def hours(self):
