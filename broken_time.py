@@ -118,7 +118,7 @@ class BrokenTime:
     # ## UNARY
 
     def __neg__(self):
-        self.neg()
+        return self.neg()
 
     # ## ITERATION PROTOCOL
 
